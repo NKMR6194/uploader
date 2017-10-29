@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <title>Uploader</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Primer/9.6.0/build.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/octicons/4.4.0/font/octicons.min.css" />
+
+    <style>
+    .Box-row small {
+      color: #586069;
+    }
+
+    .Box-row a {
+      color: black;
+      margin-right: 4px;
+    }
+
+    .Box-row .delete {
+      color: #cb2431;
+    }
+
+    .Box-row .clip {
+      margin-right: 4px;
+    }
+
+    header {
+      background-color: #24292e;
+      color: #fff;
+      padding: 0.5rem 0;
+      margin-bottom: 1rem;
+    }
+
+    .title {
+      font-size: 1.5rem;
+    }
+
+    .title .octicon {
+      font-size: 28px;
+    }
+
+    h2 {
+      padding-bottom: 8px;
+    }
+
+    section {
+      margin-bottom: 2rem;
+    }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="container-lg px-3">
+        <span class="title"><span class="octicon octicon-database"></span> Uploader</span>
+      </div>
+    </header>
+    <div class="container-lg px-3">
+      <section>
+        <h2>Upload form</h2>
+        <form method="post" action="./upload" enctype="multipart/form-data">
+          <input class="form-control" type="file" name="upload_file">
+          <button class="btn" type="submit">Upload</button>
+        </form>
+      </section>
+      <section>
+        <h2>Files</h2>
+        <div class="Box">
+          {{ range .Files }}
+            <div class="Box-row p-2">
+              <button class="btn-link clip tooltipped tooltipped-ne tooltipped-no-delay"
+                      type="button"
+                      aria-label="Copy URL to clipboard"
+                      data-clipboard-text="{{ .Name }}">
+                <span class="octicon octicon-clippy"></span>
+              </button>
+              <a href="./files/{{ .Name }}" target="_blank"><strong>{{ .Name }}</strong></a>
+              <small>{{ .UpdatedAt }}</small>
+              <form class="float-right" method="POST" action="./delete" onsubmit="return deleteConfirm(this)">
+                <input hidden name="filename" value="{{ .Name }}">
+                <button class="btn-link delete" type="submit">
+                  <span class="octicon octicon-trashcan"></span>
+                </button>
+              </form>
+            </div>
+          {{ end }}
+        </div>
+      </section>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min.js"></script>
+    <script>
+      var clipboard = new Clipboard('.clip', {
+        text: function(trigger) {
+          var url = new URL("/files/" + trigger.getAttribute('data-clipboard-text'), "" + location.href);
+          return url.href;
+        }
+      });
+      function deleteConfirm(form) {
+        var filename = form.filename.value;
+        var msg = "Are you sure you want to delete "+ filename + " ?"
+        return confirm(msg);
+      }
+
+      function clearTooltip(e) {
+        e.currentTarget.setAttribute('aria-label', 'Copy URL to clipboard');
+      }
+
+      var btns = document.querySelectorAll('.clip');
+      for (var i = 0; i < btns.length; i++) {
+        btns[i].addEventListener('mouseleave', clearTooltip);
+      }
+
+      clipboard.on('success', function(e) {
+        e.trigger.setAttribute('aria-label', 'Copied!');
+      })
+    </script>
+  </body>
+</html>
