@@ -92,7 +92,7 @@
     <script>
       var clipboard = new Clipboard('.clip', {
         text: function(trigger) {
-          var url = new URL("/files/" + trigger.getAttribute('data-clipboard-text'), "" + location.href);
+          var url = new URL("./files/" + trigger.getAttribute('data-clipboard-text'), "" + location.href);
           return url.href;
         }
       });
