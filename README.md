@@ -2,6 +2,8 @@
 
 A simple file uploader with golang.
 
+![Screenshot](screenshot.png)
+
 ## build
 
 ```
